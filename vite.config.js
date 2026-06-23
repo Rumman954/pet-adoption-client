@@ -9,13 +9,10 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      '@images': path.resolve(__dirname, '../images'),
+      '@images': path.resolve(__dirname, 'public/images'),
     },
   },
   server: {
     port: 5173,
-    fs: {
-      allow: [path.resolve(__dirname, '..')],
-    },
   },
 });

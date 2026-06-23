@@ -52,10 +52,50 @@ npm run dev
 | `VITE_API_URL` | Backend API URL (Render) |
 | `VITE_FIREBASE_*` | Firebase config for Google login |
 
-## Deploy (Vercel)
+## Deploy (Vercel — full stack: website + API)
 
-1. Push this folder to GitHub (client repo only)
-2. Import project in Vercel
-3. Root directory: `/` (repo root if this is the client repo)
-4. Add all `VITE_*` env variables
-5. Deploy
+This repo includes the **Express API** in `/server` and `/api` so **one Vercel project** runs everything.
+
+### 1. Push to GitHub
+```bash
+git add .
+git commit -m "chore: full-stack Vercel deploy"
+git push
+```
+
+### 2. Import on Vercel
+1. [vercel.com](https://vercel.com) → **Add New Project** → import `pet-adoption-client`
+2. Framework: **Vite**
+3. Build: `npm run build` · Output: `dist`
+
+### 3. Environment variables (Vercel dashboard)
+
+**Firebase (client — prefix `VITE_`):**
+| Variable | Value |
+|----------|--------|
+| `VITE_FIREBASE_API_KEY` | from Firebase |
+| `VITE_FIREBASE_AUTH_DOMAIN` | from Firebase |
+| `VITE_FIREBASE_PROJECT_ID` | from Firebase |
+| `VITE_FIREBASE_STORAGE_BUCKET` | from Firebase |
+| `VITE_FIREBASE_MESSAGING_SENDER_ID` | from Firebase |
+| `VITE_FIREBASE_APP_ID` | from Firebase |
+
+**Do NOT set `VITE_API_URL` on Vercel** — API runs on the same domain (`/api/...`).
+
+**Backend (serverless API — no `VITE_` prefix):**
+| Variable | Value |
+|----------|--------|
+| `MONGODB_URI` | your MongoDB Atlas URI |
+| `JWT_SECRET` | long random string |
+| `NODE_ENV` | `production` |
+
+### 4. Firebase authorized domain
+After deploy, add your Vercel URL in Firebase → Authentication → Settings → **Authorized domains**.
+
+### 5. Deploy
+Click **Deploy**. Live URL example: `https://pet-adoption-client.vercel.app`
+
+### Local development
+- **Client:** `npm run dev` (port 5173)
+- **Server:** run separately in `/server` folder with `npm run dev` (port 5000)
+- Keep `VITE_API_URL=http://localhost:5000` in local `.env`
