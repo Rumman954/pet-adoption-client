@@ -4,7 +4,7 @@ import { signInWithPopup } from 'firebase/auth';
 import toast from 'react-hot-toast';
 import api from '../api/axios';
 import PasswordInput from '../components/PasswordInput';
-import { auth, googleProvider, isFirebaseConfigured } from '../firebase/firebase.init';
+import { getFirebaseAuth, isFirebaseConfigured } from '../firebase/firebase.init';
 import { useAuth } from '../context/AuthContext';
 
 export default function Login() {
@@ -39,6 +39,7 @@ export default function Login() {
       return;
     }
     try {
+      const { auth, googleProvider } = getFirebaseAuth();
       const result = await signInWithPopup(auth, googleProvider);
       const { data } = await api.post('/api/auth/google', {
         name: result.user.displayName,
