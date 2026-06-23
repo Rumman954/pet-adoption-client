@@ -1,54 +1,32 @@
-# PetHome — Client (Pet Adoption Platform)
+## Deploy (Vercel only — website + API)
 
-React + Vite frontend. Deploy to **Vercel**. API runs on **Render** (see `../server`).
+Everything runs on **one Vercel project**. No Render needed.
 
-## Live URLs
+### 1. Push to GitHub and import on Vercel
+- Framework: **Vite**
+- Output Directory: **`dist`**
+- Build: `npm run build`
 
-- **Client (Vercel):** add your URL here
-- **API (Render):** add your URL here
+### 2. Environment variables on Vercel
 
-## Deploy to Vercel (website)
+**Firebase (client):**
+| Variable | Prefix |
+|----------|--------|
+| `VITE_FIREBASE_*` | all 6 Firebase keys |
 
-1. Push this repo to GitHub: `pet-adoption-client`
-2. Go to [vercel.com/new](https://vercel.com/new)
-3. Import **`pet-adoption-client`**
-4. Settings **must** be:
-
-| Setting | Value |
-|---------|--------|
-| Framework Preset | **Vite** |
-| Root Directory | `./` |
-| Build Command | `npm run build` |
-| Output Directory | **`dist`** |
-| Install Command | `npm install` |
-
-5. Add environment variables:
-
+**Database + auth (API — no `VITE_` prefix):**
 | Variable | Value |
 |----------|--------|
-| `VITE_API_URL` | Your Render API URL (e.g. `https://pethome-api.onrender.com`) |
-| `VITE_FIREBASE_API_KEY` | from Firebase |
-| `VITE_FIREBASE_AUTH_DOMAIN` | from Firebase |
-| `VITE_FIREBASE_PROJECT_ID` | from Firebase |
-| `VITE_FIREBASE_STORAGE_BUCKET` | from Firebase |
-| `VITE_FIREBASE_MESSAGING_SENDER_ID` | from Firebase |
-| `VITE_FIREBASE_APP_ID` | from Firebase |
+| `MONGODB_URI` | MongoDB Atlas connection string |
+| `JWT_SECRET` | long random secret |
+| `NODE_ENV` | `production` |
 
-6. Deploy → copy your Vercel URL
+**Do NOT set `VITE_API_URL`** — API runs on the same Vercel URL at `/api/...`
 
-7. Firebase → Authentication → Settings → **Authorized domains** → add your Vercel URL
+### 3. Firebase authorized domain
+Add your Vercel URL in Firebase → Authentication → Authorized domains.
 
-## Deploy API to Render
-
-1. Push `server` folder to GitHub: `pet-adoption-server`
-2. [render.com](https://render.com) → **New Web Service** → connect repo
-3. Build: `npm install` · Start: `node index.js`
-4. Environment variables:
-   - `MONGODB_URI`
-   - `JWT_SECRET`
-   - `NODE_ENV` = `production`
-   - `CLIENT_URL` = your Vercel URL
-5. Copy Render URL → set as `VITE_API_URL` on Vercel → **Redeploy** client
+### 4. Redeploy after adding env vars
 
 ## Run locally
 
@@ -58,4 +36,5 @@ cp .env.example .env
 npm run dev
 ```
 
-Server must run separately on port 5000 (`../server`).
+Run the API separately: `cd ../server && npm run dev` (port 5000).  
+Set `VITE_API_URL=http://localhost:5000` in local `.env`.
