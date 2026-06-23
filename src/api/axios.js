@@ -3,7 +3,7 @@ import axios from 'axios';
 const TOKEN_KEY = 'pethome-token';
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || '',
+  baseURL: import.meta.env.VITE_API_URL || (import.meta.env.PROD ? '' : 'http://localhost:5000'),
   withCredentials: true,
 });
 
