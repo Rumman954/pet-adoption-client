@@ -1,11 +1,13 @@
-const speciesOptions = ['Dog', 'Cat', 'Bird', 'Rabbit', 'Fish', 'Other'];
+const speciesOptions = ['Dog', 'Cat', 'Bird', 'Others'];
 
 export default function PetForm({ form, onChange, onSubmit, submitLabel, ownerEmail }) {
+  const labelClass = 'block text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-2';
+
   return (
-    <form onSubmit={onSubmit} className="space-y-4">
-      <div className="grid sm:grid-cols-2 gap-4">
+    <form onSubmit={onSubmit} className="space-y-6">
+      <div className="grid sm:grid-cols-2 gap-5">
         <div>
-          <label className="block text-sm font-semibold mb-1">Pet Name</label>
+          <label className={labelClass}>Pet Name</label>
           <input
             name="name"
             value={form.name}
@@ -16,7 +18,7 @@ export default function PetForm({ form, onChange, onSubmit, submitLabel, ownerEm
           />
         </div>
         <div>
-          <label className="block text-sm font-semibold mb-1">Species</label>
+          <label className={labelClass}>Species</label>
           <select name="species" value={form.species} onChange={onChange} required className="input-field">
             {speciesOptions.map((s) => (
               <option key={s} value={s}>{s}</option>
@@ -24,22 +26,22 @@ export default function PetForm({ form, onChange, onSubmit, submitLabel, ownerEm
           </select>
         </div>
         <div>
-          <label className="block text-sm font-semibold mb-1">Breed</label>
+          <label className={labelClass}>Breed</label>
           <input name="breed" value={form.breed} onChange={onChange} required className="input-field" />
         </div>
         <div>
-          <label className="block text-sm font-semibold mb-1">Age</label>
+          <label className={labelClass}>Age</label>
           <input name="age" value={form.age} onChange={onChange} required className="input-field" placeholder="2 years" />
         </div>
         <div>
-          <label className="block text-sm font-semibold mb-1">Gender</label>
+          <label className={labelClass}>Gender</label>
           <select name="gender" value={form.gender} onChange={onChange} required className="input-field">
             <option value="Male">Male</option>
             <option value="Female">Female</option>
           </select>
         </div>
         <div>
-          <label className="block text-sm font-semibold mb-1">Adoption Fee ($)</label>
+          <label className={labelClass}>Adoption Fee ($)</label>
           <input
             name="adoptionFee"
             type="number"
@@ -51,27 +53,27 @@ export default function PetForm({ form, onChange, onSubmit, submitLabel, ownerEm
           />
         </div>
         <div className="sm:col-span-2">
-          <label className="block text-sm font-semibold mb-1">Image URL</label>
+          <label className={labelClass}>Image URL</label>
           <input name="image" value={form.image} onChange={onChange} required className="input-field" placeholder="https://i.ibb.co/..." />
         </div>
         <div>
-          <label className="block text-sm font-semibold mb-1">Health Status</label>
+          <label className={labelClass}>Health Status</label>
           <input name="healthStatus" value={form.healthStatus} onChange={onChange} required className="input-field" placeholder="Excellent" />
         </div>
         <div>
-          <label className="block text-sm font-semibold mb-1">Vaccination Status</label>
+          <label className={labelClass}>Vaccination Status</label>
           <input name="vaccinationStatus" value={form.vaccinationStatus} onChange={onChange} required className="input-field" placeholder="Fully vaccinated" />
         </div>
         <div>
-          <label className="block text-sm font-semibold mb-1">Location</label>
+          <label className={labelClass}>Location</label>
           <input name="location" value={form.location} onChange={onChange} required className="input-field" />
         </div>
         <div>
-          <label className="block text-sm font-semibold mb-1">Owner Email</label>
+          <label className={labelClass}>Owner Email</label>
           <input value={ownerEmail} readOnly className="input-field bg-slate-100 dark:bg-slate-900 cursor-not-allowed" />
         </div>
         <div className="sm:col-span-2">
-          <label className="block text-sm font-semibold mb-1">Description</label>
+          <label className={labelClass}>Description</label>
           <textarea
             name="description"
             value={form.description}
@@ -82,7 +84,7 @@ export default function PetForm({ form, onChange, onSubmit, submitLabel, ownerEm
           />
         </div>
       </div>
-      <button type="submit" className="w-full sm:w-auto px-8 py-3 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl transition-colors">
+      <button type="submit" className="btn-primary w-full sm:w-auto px-10 py-3.5">
         {submitLabel}
       </button>
     </form>

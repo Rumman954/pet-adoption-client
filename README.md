@@ -1,4 +1,4 @@
-# PawHome — Client (Pet Adoption Platform)
+# PetHome — Client (Pet Adoption Platform)
 
 React + Vite + Tailwind CSS frontend for the MERN Pet Adoption assignment.
 

@@ -11,5 +11,13 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
+
 export const auth = getAuth(app);
 export const googleProvider = new GoogleAuthProvider();
+
+googleProvider.setCustomParameters({ prompt: 'select_account' });
+
+export const isFirebaseConfigured = () => {
+  const key = import.meta.env.VITE_FIREBASE_API_KEY;
+  return Boolean(key && !key.startsWith('your_'));
+};

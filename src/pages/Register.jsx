@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import api from '../api/axios';
+import PasswordInput from '../components/PasswordInput';
 
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z]).{6,}$/;
 
@@ -45,10 +46,13 @@ export default function Register() {
   };
 
   return (
-    <div className="min-h-[70vh] flex items-center justify-center px-4 py-12">
-      <div className="w-full max-w-md bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-700 p-8">
-        <h1 className="font-display text-2xl font-bold text-center text-slate-900 dark:text-white">Register</h1>
-        <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+    <div className="min-h-[70vh] flex items-center justify-center px-4 py-12 bg-gradient-to-br from-orange-50/80 via-white to-emerald-50/50 dark:from-slate-950 dark:via-slate-900 dark:to-emerald-950/20">
+      <div className="w-full max-w-md premium-card p-8 sm:p-10">
+        <div className="text-center mb-8">
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-brand-600 dark:text-brand-400 mb-2">Join PetHome</p>
+          <h1 className="font-display text-3xl font-bold text-slate-900 dark:text-white">Register</h1>
+        </div>
+        <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-semibold mb-1">Name</label>
             <input name="name" value={form.name} onChange={handleChange} required className="input-field" />
@@ -63,13 +67,13 @@ export default function Register() {
           </div>
           <div>
             <label className="block text-sm font-semibold mb-1">Password</label>
-            <input name="password" type="password" value={form.password} onChange={handleChange} required className="input-field" />
+            <PasswordInput name="password" value={form.password} onChange={handleChange} required />
           </div>
           <div>
             <label className="block text-sm font-semibold mb-1">Confirm Password</label>
-            <input name="confirmPassword" type="password" value={form.confirmPassword} onChange={handleChange} required className="input-field" />
+            <PasswordInput name="confirmPassword" value={form.confirmPassword} onChange={handleChange} required />
           </div>
-          <button type="submit" disabled={loading} className="w-full py-3 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl disabled:opacity-60">
+          <button type="submit" disabled={loading} className="w-full btn-primary py-3.5 disabled:hover:translate-y-0">
             {loading ? 'Registering...' : 'Register'}
           </button>
         </form>

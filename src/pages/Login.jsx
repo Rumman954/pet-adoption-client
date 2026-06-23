@@ -3,7 +3,8 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { signInWithPopup } from 'firebase/auth';
 import toast from 'react-hot-toast';
 import api from '../api/axios';
-import { auth, googleProvider } from '../firebase/firebase.init';
+import PasswordInput from '../components/PasswordInput';
+import { auth, googleProvider, isFirebaseConfigured } from '../firebase/firebase.init';
 import { useAuth } from '../context/AuthContext';
 
 export default function Login() {
@@ -21,7 +22,7 @@ export default function Login() {
     try {
       const { data } = await api.post('/api/auth/login', { email, password });
       if (data.success) {
-        login(data.user);
+        login(data.user, data.token);
         toast.success(data.message);
         navigate(from, { replace: true });
       }
@@ -33,8 +34,8 @@ export default function Login() {
   };
 
   const handleGoogle = async () => {
-    if (!import.meta.env.VITE_FIREBASE_API_KEY) {
-      toast.error('Google login is not configured. Add Firebase keys to .env');
+    if (!isFirebaseConfigured()) {
+      toast.error('Google login is not configured. Add Firebase keys to client/.env');
       return;
     }
     try {
@@ -45,19 +46,27 @@ export default function Login() {
         photoURL: result.user.photoURL,
       });
       if (data.success) {
-        login(data.user);
+        login(data.user, data.token);
         toast.success(data.message);
         navigate(from, { replace: true });
       }
     } catch (err) {
-      toast.error(err.response?.data?.message || err.message || 'Google login failed.');
+      const isNetwork = err.message === 'Network Error' || err.code === 'ERR_NETWORK';
+      toast.error(
+        isNetwork
+          ? 'Cannot reach server. Run: cd server → npm run dev'
+          : err.response?.data?.message || err.message || 'Google login failed.'
+      );
     }
   };
 
   return (
-    <div className="min-h-[70vh] flex items-center justify-center px-4 py-12">
-      <div className="w-full max-w-md bg-white dark:bg-slate-800 rounded-2xl shadow-xl border border-slate-100 dark:border-slate-700 p-8">
-        <h1 className="font-display text-2xl font-bold text-slate-900 dark:text-white text-center">Login</h1>
+    <div className="min-h-[70vh] flex items-center justify-center px-4 py-12 bg-gradient-to-br from-orange-50/80 via-white to-emerald-50/50 dark:from-slate-950 dark:via-slate-900 dark:to-emerald-950/20">
+      <div className="w-full max-w-md premium-card p-8 sm:p-10">
+        <div className="text-center mb-8">
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-brand-600 dark:text-brand-400 mb-2">Welcome back</p>
+          <h1 className="font-display text-3xl font-bold text-slate-900 dark:text-white">Login</h1>
+        </div>
         <form onSubmit={handleSubmit} className="mt-6 space-y-4">
           <div>
             <label className="block text-sm font-semibold mb-1">Email</label>
@@ -65,14 +74,20 @@ export default function Login() {
           </div>
           <div>
             <label className="block text-sm font-semibold mb-1">Password</label>
-            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required className="input-field" />
+            <PasswordInput
+              name="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
           </div>
-          <button type="submit" disabled={loading} className="w-full py-3 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl disabled:opacity-60">
+          <button type="submit" disabled={loading} className="w-full btn-primary py-3.5 disabled:hover:translate-y-0">
             {loading ? 'Logging in...' : 'Login'}
           </button>
         </form>
-        <button type="button" onClick={handleGoogle} className="mt-4 w-full py-3 border-2 border-slate-200 dark:border-slate-600 font-bold rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700 flex items-center justify-center gap-2">
-          <span>G</span> Google Login
+        <button type="button" onClick={handleGoogle} className="mt-4 w-full py-3 border-2 border-slate-200 dark:border-slate-600 font-bold rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700 flex items-center justify-center gap-3 text-slate-700 dark:text-slate-200">
+          <img src="/images/google-logo.png" alt="" className="w-5 h-5 object-contain" aria-hidden />
+          Google Login
         </button>
         <p className="mt-6 text-center text-sm text-slate-600 dark:text-slate-400">
           No account? <Link to="/register" className="text-brand-600 dark:text-brand-400 font-bold">Register</Link>

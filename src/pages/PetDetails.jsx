@@ -5,6 +5,17 @@ import api from '../api/axios';
 import { useAuth } from '../context/AuthContext';
 import LoadingSpinner from '../components/LoadingSpinner';
 
+const detailItems = (pet) => [
+  { label: 'Species', value: pet.species, icon: '🐾' },
+  { label: 'Breed', value: pet.breed, icon: '📋' },
+  { label: 'Age', value: pet.age, icon: '🎂' },
+  { label: 'Gender', value: pet.gender, icon: '⚥' },
+  { label: 'Health', value: pet.healthStatus, icon: '💚' },
+  { label: 'Vaccination', value: pet.vaccinationStatus, icon: '💉' },
+  { label: 'Location', value: pet.location, icon: '📍' },
+  { label: 'Adoption fee', value: `$${pet.adoptionFee}`, icon: '💰' },
+];
+
 export default function PetDetails() {
   const { id } = useParams();
   const { user, loading: authLoading } = useAuth();
@@ -55,79 +66,104 @@ export default function PetDetails() {
   const pickupDateValid = (d) => d && new Date(d) >= new Date(new Date().toDateString());
 
   if (authLoading || loading) return <LoadingSpinner fullPage />;
-  if (!pet) return <p className="text-center py-20">Pet not found.</p>;
+  if (!pet) {
+    return (
+      <div className="max-w-lg mx-auto py-24 text-center premium-card">
+        <p className="font-display text-xl font-bold">Pet not found</p>
+      </div>
+    );
+  }
 
   const isOwner = user?.email === pet.ownerEmail;
 
   return (
-    <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-      <div className="grid lg:grid-cols-2 gap-10">
-        <div>
-          <img src={pet.image} alt={pet.name} className="w-full rounded-2xl shadow-lg aspect-[4/3] object-cover" />
-          <div className="mt-6 grid grid-cols-2 gap-4 text-sm">
-            <div className="bg-slate-50 dark:bg-slate-800 p-4 rounded-xl"><strong>Species:</strong> {pet.species}</div>
-            <div className="bg-slate-50 dark:bg-slate-800 p-4 rounded-xl"><strong>Breed:</strong> {pet.breed}</div>
-            <div className="bg-slate-50 dark:bg-slate-800 p-4 rounded-xl"><strong>Age:</strong> {pet.age}</div>
-            <div className="bg-slate-50 dark:bg-slate-800 p-4 rounded-xl"><strong>Gender:</strong> {pet.gender}</div>
-            <div className="bg-slate-50 dark:bg-slate-800 p-4 rounded-xl"><strong>Health:</strong> {pet.healthStatus}</div>
-            <div className="bg-slate-50 dark:bg-slate-800 p-4 rounded-xl"><strong>Vaccination:</strong> {pet.vaccinationStatus}</div>
-            <div className="bg-slate-50 dark:bg-slate-800 p-4 rounded-xl"><strong>Location:</strong> {pet.location}</div>
-            <div className="bg-slate-50 dark:bg-slate-800 p-4 rounded-xl"><strong>Fee:</strong> ${pet.adoptionFee}</div>
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
+      <div className="grid lg:grid-cols-5 gap-10 lg:gap-12">
+        <div className="lg:col-span-3">
+          <div className="relative rounded-3xl overflow-hidden shadow-2xl ring-1 ring-slate-200/80 dark:ring-slate-700">
+            <img src={pet.image} alt={pet.name} className="w-full aspect-[4/3] object-cover" />
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-900/70 via-transparent to-transparent" />
+            <div className="absolute bottom-6 left-6 right-6">
+              <span className={`inline-block px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wide ${
+                pet.status === 'adopted' ? 'bg-slate-600 text-white' : 'bg-white/95 text-slate-800'
+              }`}>
+                {pet.status}
+              </span>
+              <h1 className="mt-3 font-display text-3xl sm:text-4xl font-bold text-white drop-shadow-lg">{pet.name}</h1>
+            </div>
           </div>
-          <p className="mt-6 text-slate-600 dark:text-slate-400">{pet.description}</p>
+
+          <div className="mt-8 grid grid-cols-2 sm:grid-cols-4 gap-3">
+            {detailItems(pet).map((item) => (
+              <div key={item.label} className="premium-card p-4 hover:-translate-y-0.5">
+                <span className="text-lg" aria-hidden>{item.icon}</span>
+                <p className="mt-2 text-xs font-bold uppercase tracking-wide text-slate-400">{item.label}</p>
+                <p className="mt-1 text-sm font-semibold text-slate-800 dark:text-white">{item.value}</p>
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-8 premium-card p-6 sm:p-8">
+            <h2 className="font-display text-lg font-bold text-slate-900 dark:text-white">About {pet.name}</h2>
+            <p className="mt-4 text-slate-600 dark:text-slate-400 leading-relaxed">{pet.description}</p>
+          </div>
         </div>
 
-        <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 p-6 h-fit sticky top-24">
-          <h1 className="font-display text-3xl font-bold text-slate-900 dark:text-white">{pet.name}</h1>
-          <span className={`inline-block mt-2 px-3 py-1 rounded-lg text-xs font-bold text-white ${pet.status === 'adopted' ? 'bg-slate-600' : 'bg-forest-600'}`}>
-            {pet.status}
-          </span>
+        <div className="lg:col-span-2">
+          <div className="premium-card p-6 sm:p-8 sticky top-24 shadow-xl">
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-brand-600 dark:text-brand-400">Adoption request</p>
+            <h2 className="mt-2 font-display text-2xl font-bold text-slate-900 dark:text-white">Take me home</h2>
 
-          {isOwner ? (
-            <p className="mt-6 text-amber-600 dark:text-amber-400 font-semibold">
-              You own this listing. Manage requests from My Listings.
-            </p>
-          ) : pet.status === 'adopted' ? (
-            <p className="mt-6 text-slate-500 font-semibold">This pet has been adopted.</p>
-          ) : (
-            <form onSubmit={handleSubmit} className="mt-6 space-y-4">
-              <div>
-                <label className="block text-sm font-semibold mb-1">Pet Name</label>
-                <input value={pet.name} readOnly className="input-field bg-slate-100 dark:bg-slate-900 cursor-not-allowed" />
+            {isOwner ? (
+              <div className="mt-6 p-4 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800">
+                <p className="text-amber-800 dark:text-amber-300 font-semibold text-sm">
+                  You own this listing. Manage adoption requests from My Listings.
+                </p>
               </div>
-              <div>
-                <label className="block text-sm font-semibold mb-1">Your Name</label>
-                <input value={user?.name || ''} readOnly className="input-field bg-slate-100 dark:bg-slate-900 cursor-not-allowed" />
+            ) : pet.status === 'adopted' ? (
+              <div className="mt-6 p-4 rounded-xl bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
+                <p className="text-slate-600 dark:text-slate-400 font-semibold">This pet has already been adopted.</p>
               </div>
-              <div>
-                <label className="block text-sm font-semibold mb-1">Your Email</label>
-                <input value={user?.email || ''} readOnly className="input-field bg-slate-100 dark:bg-slate-900 cursor-not-allowed" />
-              </div>
-              <div>
-                <label className="block text-sm font-semibold mb-1">Pickup Date</label>
-                <input
-                  type="date"
-                  value={form.pickupDate}
-                  onChange={(e) => setForm({ ...form, pickupDate: e.target.value })}
-                  required
-                  className="input-field"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-semibold mb-1">Message</label>
-                <textarea
-                  value={form.message}
-                  onChange={(e) => setForm({ ...form, message: e.target.value })}
-                  rows={3}
-                  className="input-field"
-                  placeholder="Tell the owner about your home..."
-                />
-              </div>
-              <button type="submit" disabled={submitting} className="w-full py-3 bg-brand-600 hover:bg-brand-700 text-white font-bold rounded-xl disabled:opacity-60">
-                {submitting ? 'Submitting...' : 'Adopt'}
-              </button>
-            </form>
-          )}
+            ) : (
+              <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+                <div>
+                  <label className="block text-sm font-semibold mb-1.5 text-slate-700 dark:text-slate-300">Pet Name</label>
+                  <input value={pet.name} readOnly className="input-field bg-slate-100 dark:bg-slate-900/80 cursor-not-allowed" />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold mb-1.5 text-slate-700 dark:text-slate-300">Your Name</label>
+                  <input value={user?.name || ''} readOnly className="input-field bg-slate-100 dark:bg-slate-900/80 cursor-not-allowed" />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold mb-1.5 text-slate-700 dark:text-slate-300">Your Email</label>
+                  <input value={user?.email || ''} readOnly className="input-field bg-slate-100 dark:bg-slate-900/80 cursor-not-allowed" />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold mb-1.5 text-slate-700 dark:text-slate-300">Pickup Date</label>
+                  <input
+                    type="date"
+                    value={form.pickupDate}
+                    onChange={(e) => setForm({ ...form, pickupDate: e.target.value })}
+                    required
+                    className="input-field"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold mb-1.5 text-slate-700 dark:text-slate-300">Message</label>
+                  <textarea
+                    value={form.message}
+                    onChange={(e) => setForm({ ...form, message: e.target.value })}
+                    rows={4}
+                    className="input-field"
+                    placeholder="Tell the owner about your home and experience with pets..."
+                  />
+                </div>
+                <button type="submit" disabled={submitting} className="w-full btn-primary py-3.5 disabled:hover:translate-y-0">
+                  {submitting ? 'Submitting...' : 'Submit adoption request'}
+                </button>
+              </form>
+            )}
+          </div>
         </div>
       </div>
     </div>

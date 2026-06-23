@@ -51,8 +51,10 @@ export default function AddPet() {
 
   return (
     <div className="max-w-3xl">
-      <h2 className="font-display text-2xl font-bold text-slate-900 dark:text-white mb-6">Add a New Pet</h2>
-      <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-100 dark:border-slate-700 p-6">
+      <p className="text-xs font-bold uppercase tracking-[0.2em] text-brand-600 dark:text-brand-400 mb-2">New listing</p>
+      <h2 className="font-display text-2xl sm:text-3xl font-bold text-slate-900 dark:text-white mb-2">Add a New Pet</h2>
+      <p className="text-slate-500 dark:text-slate-400 mb-8">Fill in the details below. Your listing will appear on the All Pets page.</p>
+      <div className="premium-card p-6 sm:p-8">
         <PetForm
           form={form}
           onChange={handleChange}

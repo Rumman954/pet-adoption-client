@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../hooks/useTheme';
+import Logo from './Logo';
 
 export default function Navbar() {
   const { user, logout } = useAuth();
@@ -17,23 +18,18 @@ export default function Navbar() {
   };
 
   const linkClass = ({ isActive }) =>
-    `text-sm font-semibold transition-colors ${
+    `text-sm font-semibold px-3 py-2 rounded-lg transition-all ${
       isActive
-        ? 'text-brand-600 dark:text-brand-400'
-        : 'text-slate-600 dark:text-slate-300 hover:text-brand-600 dark:hover:text-brand-400'
+        ? 'text-brand-600 dark:text-brand-400 bg-brand-50 dark:bg-brand-950/50'
+        : 'text-slate-600 dark:text-slate-300 hover:text-brand-600 dark:hover:text-brand-400 hover:bg-slate-50 dark:hover:bg-slate-800/50'
     }`;
 
   return (
-    <header className="sticky top-0 z-50 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-100 dark:border-slate-800">
-      <nav className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
-        <Link to="/" className="flex items-center gap-2">
-          <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-500 text-white text-xl">🐾</span>
-          <span className="font-display font-bold text-xl text-slate-900 dark:text-white">
-            Paw<span className="text-brand-600 dark:text-brand-400">Home</span>
-          </span>
-        </Link>
+    <header className="sticky top-0 z-50 bg-white/80 dark:bg-slate-950/80 backdrop-blur-xl border-b border-slate-200/80 dark:border-slate-800/80 shadow-sm shadow-slate-900/5">
+      <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between min-h-[4.5rem] py-2">
+        <Logo />
 
-        <ul className="hidden md:flex items-center gap-6">
+        <ul className="hidden md:flex items-center gap-1">
           <li><NavLink to="/" end className={linkClass}>Home</NavLink></li>
           <li><NavLink to="/all-pets" className={linkClass}>All Pets</NavLink></li>
           {user && (
@@ -92,7 +88,7 @@ export default function Navbar() {
           ) : (
             <Link
               to="/login"
-              className="px-4 py-2 text-sm font-bold text-white bg-brand-600 hover:bg-brand-700 rounded-xl transition-colors"
+              className="px-5 py-2.5 text-sm font-bold text-white bg-brand-600 hover:bg-brand-700 rounded-xl transition-all shadow-md shadow-brand-600/25 hover:shadow-brand-600/40"
             >
               Login
             </Link>
