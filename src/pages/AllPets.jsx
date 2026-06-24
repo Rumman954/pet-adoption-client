@@ -151,8 +151,8 @@ export default function AllPets() {
           </div>
         ) : (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-7 mt-8">
-            {pets.map((pet) => (
-              <PetCard key={pet._id} pet={pet} showAdopt onAdopt={handleAdopt} />
+            {pets.map((pet, index) => (
+              <PetCard key={pet._id} pet={pet} showAdopt onAdopt={handleAdopt} index={index} />
             ))}
           </div>
         )}

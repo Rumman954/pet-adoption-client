@@ -3,9 +3,9 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 
 const tabs = [
-  { to: '/my-listings', label: 'My Listings', icon: '🏷️', hint: 'See incoming requests' },
-  { to: '/my-requests', label: 'Sent Requests', icon: '📋', hint: 'Pets you requested' },
+  { to: '/my-requests', label: 'My Requests', icon: '📋', hint: 'Pets you requested' },
   { to: '/add-pet', label: 'Add Pet', icon: '➕', hint: 'New listing' },
+  { to: '/my-listings', label: 'My Listings', icon: '🏷️', hint: 'See incoming requests' },
 ];
 
 export default function DashboardLayout() {

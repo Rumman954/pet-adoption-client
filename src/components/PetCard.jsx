@@ -1,13 +1,23 @@
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
 
-export default function PetCard({ pet, showAdopt = false, onAdopt }) {
+export default function PetCard({ pet, showAdopt = false, onAdopt, index = 0 }) {
   return (
-    <article className="group premium-card overflow-hidden hover:-translate-y-1">
+    <motion.article
+      initial={{ opacity: 0, y: 24 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, margin: '-20px' }}
+      transition={{ duration: 0.45, delay: index * 0.07 }}
+      whileHover={{ y: -6, transition: { duration: 0.2 } }}
+      className="group premium-card overflow-hidden"
+    >
       <div className="relative aspect-[4/3] overflow-hidden">
-        <img
+        <motion.img
           src={pet.image}
           alt={pet.name}
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+          className="w-full h-full object-cover"
+          whileHover={{ scale: 1.06 }}
+          transition={{ duration: 0.45 }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-slate-900/60 via-transparent to-transparent opacity-80" />
         <span
@@ -54,6 +64,6 @@ export default function PetCard({ pet, showAdopt = false, onAdopt }) {
           )}
         </div>
       </div>
-    </article>
+    </motion.article>
   );
 }

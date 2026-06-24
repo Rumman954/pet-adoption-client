@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import api from '../api/axios';
 import PetCard from '../components/PetCard';
 import SectionHeading from '../components/SectionHeading';
@@ -49,7 +50,12 @@ export default function Home() {
 
         <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-16 sm:pt-16 sm:pb-20 lg:pt-20 lg:pb-28">
           <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
-            <div className="text-center lg:text-left hero-fade-in">
+            <motion.div
+              initial={{ opacity: 0, x: -24 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6, ease: 'easeOut' }}
+              className="text-center lg:text-left hero-fade-in"
+            >
               <div className="inline-flex items-center gap-2.5 px-4 py-2 rounded-full bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border border-orange-100 dark:border-slate-700 shadow-sm mb-8">
                 <span className="relative flex h-2.5 w-2.5">
                   <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
@@ -89,9 +95,14 @@ export default function Home() {
                   </div>
                 ))}
               </div>
-            </div>
+            </motion.div>
 
-            <div className="relative flex justify-center lg:justify-end hero-fade-in-delay">
+            <motion.div
+              initial={{ opacity: 0, x: 24 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6, delay: 0.15, ease: 'easeOut' }}
+              className="relative flex justify-center lg:justify-end hero-fade-in-delay"
+            >
               <div className="relative w-full max-w-md lg:max-w-lg pb-6">
                 <div className="absolute -inset-4 bg-gradient-to-tr from-brand-400/30 via-transparent to-emerald-400/25 rounded-[2rem] blur-3xl" aria-hidden />
 
@@ -129,7 +140,7 @@ export default function Home() {
                   </div>
                 </div>
               </div>
-            </div>
+            </motion.div>
           </div>
         </div>
       </section>
@@ -147,8 +158,8 @@ export default function Home() {
             <p className="text-center py-16 text-slate-500 glass-card">No featured pets yet. Check back soon!</p>
           ) : (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
-              {pets.map((pet) => (
-                <PetCard key={pet._id} pet={pet} />
+              {pets.map((pet, index) => (
+                <PetCard key={pet._id} pet={pet} index={index} />
               ))}
             </div>
           )}

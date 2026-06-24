@@ -1,6 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { signInWithPopup } from 'firebase/auth';
+import { getRedirectResult, signInWithPopup, signInWithRedirect } from 'firebase/auth';
 import toast from 'react-hot-toast';
 import api from '../api/axios';
 import PasswordInput from '../components/PasswordInput';
@@ -11,10 +11,41 @@ export default function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from?.pathname || '/';
+
+  const finishGoogleLogin = async (user) => {
+    const { data } = await api.post('/api/auth/google', {
+      name: user.displayName,
+      email: user.email,
+      photoURL: user.photoURL,
+    });
+    if (data.success) {
+      login(data.user, data.token);
+      toast.success(data.message);
+      navigate(from, { replace: true });
+    }
+  };
+
+  useEffect(() => {
+    if (!isFirebaseConfigured()) return;
+
+    const { auth } = getFirebaseAuth();
+    getRedirectResult(auth)
+      .then(async (result) => {
+        if (result?.user) {
+          setGoogleLoading(true);
+          await finishGoogleLogin(result.user);
+        }
+      })
+      .catch((err) => {
+        toast.error(err.response?.data?.message || err.message || 'Google login failed.');
+      })
+      .finally(() => setGoogleLoading(false));
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -42,26 +73,36 @@ export default function Login() {
       );
       return;
     }
+
     try {
+      setGoogleLoading(true);
       const { auth, googleProvider } = getFirebaseAuth();
-      const result = await signInWithPopup(auth, googleProvider);
-      const { data } = await api.post('/api/auth/google', {
-        name: result.user.displayName,
-        email: result.user.email,
-        photoURL: result.user.photoURL,
-      });
-      if (data.success) {
-        login(data.user, data.token);
-        toast.success(data.message);
-        navigate(from, { replace: true });
+
+      if (import.meta.env.PROD) {
+        await signInWithRedirect(auth, googleProvider);
+        return;
+      }
+
+      try {
+        const result = await signInWithPopup(auth, googleProvider);
+        await finishGoogleLogin(result.user);
+      } catch (err) {
+        if (err.code === 'auth/popup-blocked') {
+          toast('Popup blocked — redirecting to Google...', { icon: 'ℹ️' });
+          await signInWithRedirect(auth, googleProvider);
+          return;
+        }
+        throw err;
       }
     } catch (err) {
       const isNetwork = err.message === 'Network Error' || err.code === 'ERR_NETWORK';
       toast.error(
         isNetwork
-          ? 'Cannot reach server. Run: cd server → npm run dev'
+          ? 'Cannot reach server. Check Vercel env vars and redeploy.'
           : err.response?.data?.message || err.message || 'Google login failed.'
       );
+    } finally {
+      setGoogleLoading(false);
     }
   };
 
@@ -90,9 +131,14 @@ export default function Login() {
             {loading ? 'Logging in...' : 'Login'}
           </button>
         </form>
-        <button type="button" onClick={handleGoogle} className="mt-4 w-full py-3 border-2 border-slate-200 dark:border-slate-600 font-bold rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700 flex items-center justify-center gap-3 text-slate-700 dark:text-slate-200">
+        <button
+          type="button"
+          onClick={handleGoogle}
+          disabled={googleLoading}
+          className="mt-4 w-full py-3 border-2 border-slate-200 dark:border-slate-600 font-bold rounded-xl hover:bg-slate-50 dark:hover:bg-slate-700 flex items-center justify-center gap-3 text-slate-700 dark:text-slate-200 disabled:opacity-60"
+        >
           <img src="/images/google-logo.png" alt="" className="w-5 h-5 object-contain" aria-hidden />
-          Google Login
+          {googleLoading ? 'Connecting...' : 'Google Login'}
         </button>
         <p className="mt-6 text-center text-sm text-slate-600 dark:text-slate-400">
           No account? <Link to="/register" className="text-brand-600 dark:text-brand-400 font-bold">Register</Link>
