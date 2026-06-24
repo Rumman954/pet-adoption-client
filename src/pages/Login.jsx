@@ -35,7 +35,11 @@ export default function Login() {
 
   const handleGoogle = async () => {
     if (!isFirebaseConfigured()) {
-      toast.error('Google login is not configured. Add Firebase keys to client/.env');
+      toast.error(
+        import.meta.env.PROD
+          ? 'Firebase not configured on Vercel. Add VITE_FIREBASE_* env vars and redeploy.'
+          : 'Google login is not configured. Add Firebase keys to client/.env'
+      );
       return;
     }
     try {

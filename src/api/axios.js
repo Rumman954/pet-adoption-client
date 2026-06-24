@@ -2,8 +2,19 @@ import axios from 'axios';
 
 const TOKEN_KEY = 'pethome-token';
 
+const resolveBaseURL = () => {
+  const fromEnv = import.meta.env.VITE_API_URL || '';
+  if (import.meta.env.PROD) {
+    if (!fromEnv || fromEnv.includes('localhost') || fromEnv.includes('127.0.0.1')) {
+      return '';
+    }
+    return fromEnv;
+  }
+  return fromEnv || 'http://localhost:5000';
+};
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || (import.meta.env.PROD ? '' : 'http://localhost:5000'),
+  baseURL: resolveBaseURL(),
   withCredentials: true,
 });
 
